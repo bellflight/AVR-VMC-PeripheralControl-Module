@@ -1,13 +1,13 @@
 import os
 
-from bell.avr.mqtt.client import MQTTModule
+from bell.avr.mqtt.module import MQTTModule
 from bell.avr.mqtt.payloads import (
     AVRPCMColorSet,
     AVRPCMColorTimed,
     AVRPCMServo,
-    AVRPCMServoPWM,
     AVRPCMServoAbsolute,
     AVRPCMServoPercent,
+    AVRPCMServoPWM,
 )
 from bell.avr.serial.client import SerialLoop
 from bell.avr.serial.pcc import PeripheralControlComputer
@@ -22,15 +22,15 @@ class PeripheralControlModule(MQTTModule):
         super().__init__()
 
         # PCC connection
-        self.ser = SerialLoop()
-        self.ser.port = port
-        self.ser.baudrate = baud_rate
-        self.ser.open()
+        self.serial = SerialLoop()
+        self.serial.port = port
+        self.serial.baudrate = baud_rate
+        self.serial.open()
 
-        self.pcc = PeripheralControlComputer(self.ser)
+        self.pcc = PeripheralControlComputer(self.serial)
 
         # MQTT topics
-        self.topic_map = {
+        self.topic_callbacks = {
             "avr/pcm/color/set": self.color_set,
             "avr/pcm/color/timed": self.color_timed,
             "avr/pcm/laser/fire": self.laser_fire,
@@ -46,7 +46,7 @@ class PeripheralControlModule(MQTTModule):
 
     def run(self) -> None:
         super().run_non_blocking()
-        self.ser.run()
+        self.serial.run()
 
     def color_set(self, payload: AVRPCMColorSet) -> None:
         self.pcc.set_base_color(wrgb=payload.wrgb)
