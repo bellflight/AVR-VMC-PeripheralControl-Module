@@ -1,14 +1,6 @@
 import os
 
 from bell.avr.mqtt.module import MQTTModule
-from bell.avr.mqtt.payloads import (
-    AVRPCMColorSet,
-    AVRPCMColorTimed,
-    AVRPCMServo,
-    AVRPCMServoAbsolute,
-    AVRPCMServoPercent,
-    AVRPCMServoPWM,
-)
 from bell.avr.serial.client import SerialLoop
 from bell.avr.serial.pcc import PeripheralControlComputer
 from bell.avr.utils.env import get_env_int
@@ -31,55 +23,38 @@ class PeripheralControlModule(MQTTModule):
 
         # MQTT topics
         self.topic_callbacks = {
-            "avr/pcm/color/set": self.color_set,
-            "avr/pcm/color/timed": self.color_timed,
-            "avr/pcm/laser/fire": self.laser_fire,
-            "avr/pcm/laser/on": self.laser_on,
-            "avr/pcm/laser/off": self.laser_off,
-            "avr/pcm/servo/open": self.servo_open,
-            "avr/pcm/servo/close": self.servo_close,
-            "avr/pcm/servo/pwm/min": self.servo_pwm_min,
-            "avr/pcm/servo/pwm/max": self.servo_pwm_max,
-            "avr/pcm/servo/percent": self.servo_percent,
-            "avr/pcm/servo/absolute": self.servo_absolute,
+            "avr/pcm/color/set": lambda payload: self.pcc.set_base_color(
+                wrgb=payload.wrgb
+            ),
+            "avr/pcm/color/timed": lambda payload: self.pcc.set_temp_color(
+                wrgb=payload.wrgb, time=payload.time
+            ),
+            "avr/pcm/laser/fire": self.pcc.fire_laser,
+            "avr/pcm/laser/on": self.pcc.set_laser_on,
+            "avr/pcm/laser/off": self.pcc.set_laser_off,
+            "avr/pcm/servo/open": lambda payload: self.pcc.set_servo_open_close(
+                payload.servo, "open"
+            ),
+            "avr/pcm/servo/close": lambda payload: self.pcc.set_servo_open_close(
+                payload.servo, "close"
+            ),
+            "avr/pcm/servo/pwm/min": lambda payload: self.pcc.set_servo_min(
+                payload.servo, payload.pulse
+            ),
+            "avr/pcm/servo/pwm/max": lambda payload: self.pcc.set_servo_max(
+                payload.servo, payload.pulse
+            ),
+            "avr/pcm/servo/percent": lambda payload: self.pcc.set_servo_pct(
+                payload.servo, payload.percent
+            ),
+            "avr/pcm/servo/absolute": lambda payload: self.pcc.set_servo_abs(
+                payload.servo, payload.position
+            ),
         }
 
     def run(self) -> None:
         super().run_non_blocking()
         self.serial.run()
-
-    def color_set(self, payload: AVRPCMColorSet) -> None:
-        self.pcc.set_base_color(wrgb=payload.wrgb)
-
-    def color_timed(self, payload: AVRPCMColorTimed) -> None:
-        self.pcc.set_temp_color(wrgb=payload.wrgb, time=payload.time)
-
-    def laser_fire(self) -> None:
-        self.pcc.fire_laser()
-
-    def laser_on(self) -> None:
-        self.pcc.set_laser_on()
-
-    def laser_off(self) -> None:
-        self.pcc.set_laser_off()
-
-    def servo_open(self, payload: AVRPCMServo) -> None:
-        self.pcc.set_servo_open_close(payload.servo, "open")
-
-    def servo_close(self, payload: AVRPCMServo) -> None:
-        self.pcc.set_servo_open_close(payload.servo, "close")
-
-    def servo_pwm_min(self, payload: AVRPCMServoPWM) -> None:
-        self.pcc.set_servo_min(payload.servo, payload.pulse)
-
-    def servo_pwm_max(self, payload: AVRPCMServoPWM) -> None:
-        self.pcc.set_servo_max(payload.servo, payload.pulse)
-
-    def servo_percent(self, payload: AVRPCMServoPercent) -> None:
-        self.pcc.set_servo_pct(payload.servo, payload.percent)
-
-    def servo_absolute(self, payload: AVRPCMServoAbsolute) -> None:
-        self.pcc.set_servo_abs(payload.servo, payload.position)
 
 
 if __name__ == "__main__":
