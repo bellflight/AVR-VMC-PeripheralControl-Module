@@ -27,7 +27,7 @@ class PeripheralControlModule(MQTTModule):
                 wrgb=payload.wrgb
             ),
             "avr/pcm/color/timed": lambda payload: self.pcc.set_temp_color(
-                wrgb=payload.wrgb, time=payload.time
+                wrgb=payload.wrgb, duration=payload.time
             ),
             "avr/pcm/laser/fire": self.pcc.fire_laser,
             "avr/pcm/laser/on": self.pcc.set_laser_on,
