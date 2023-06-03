@@ -5,7 +5,7 @@ from bell.avr.serial.client import SerialLoop
 from bell.avr.serial.pcc import PeripheralControlComputer
 from bell.avr.utils.env import get_env_int
 
-PCM_SERIAL_DEVICE = os.getenv("PCM_DEVICE", "/dev/ttyACM0")
+PCM_SERIAL_DEVICE = os.getenv("PCM_SERIAL_DEVICE", "/dev/ttyACM0")
 PCM_SERIAL_BAUD_RATE = get_env_int("PCM_SERIAL_BAUD_RATE", 115200)
 
 
