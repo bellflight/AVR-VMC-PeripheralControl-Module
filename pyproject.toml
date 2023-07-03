@@ -9,16 +9,20 @@
 
 [tool.poetry.dependencies]
     python             = ">=3.9,<3.12"
-    loguru             = "^0.6.0"
-    bell-avr-libraries = { extras = ["serial"], version = "0.2.0a2" }
+    loguru             = "0.7.0"
+    bell-avr-libraries = { extras = ["serial"], version = "0.2.0a4" }
 
 [tool.poetry.group.dev.dependencies]
-    pre-commit = "^3.3.2"
+    pre-commit = "^3.3.3"
+    # required to be able to properly export
+    # The `typing-extensions` package has the following compatible candidates `[Package('typing-extensions', '4.6.3')]`;  but, the exporter dependency walker previously elected `typing-extensions (4.7.0)` which is not compatible with the dependency `typing-extensions (>=4.6.0,<4.7.0)`. Please contribute to `poetry-plugin-export` to solve this problem.
+    typing-extensions = "4.6.3"
 
 [tool.pyright]
-    typeCheckingMode = "basic"
-    venvPath         = "."
-    venv             = ".venv"
+    typeCheckingMode           = "basic"
+    venvPath                   = "."
+    venv                       = ".venv"
+    reportMissingParameterType = true
 
 [tool.ruff]
     ignore = ["E501"]
