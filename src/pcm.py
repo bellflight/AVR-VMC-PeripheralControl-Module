@@ -5,8 +5,8 @@ from bell.avr.serial.client import SerialLoop
 from bell.avr.serial.pcc import PeripheralControlComputer
 from bell.avr.utils.env import get_env_int
 
-PCM_SERIAL_DEVICE = os.getenv("PCM_SERIAL_DEVICE", "/dev/ttyACM0")
-PCM_SERIAL_BAUD_RATE = get_env_int("PCM_SERIAL_BAUD_RATE", 115200)
+PCC_SERIAL_DEVICE = os.getenv("PCC_SERIAL_DEVICE", "/dev/ttyACM0")
+PCC_SERIAL_BAUD_RATE = get_env_int("PCC_SERIAL_BAUD_RATE", 115200)
 
 
 class PeripheralControlModule(MQTTModule):
@@ -58,5 +58,5 @@ class PeripheralControlModule(MQTTModule):
 
 
 if __name__ == "__main__":
-    pcm = PeripheralControlModule(PCM_SERIAL_DEVICE, PCM_SERIAL_BAUD_RATE)
+    pcm = PeripheralControlModule(PCC_SERIAL_DEVICE, PCC_SERIAL_BAUD_RATE)
     pcm.run()
