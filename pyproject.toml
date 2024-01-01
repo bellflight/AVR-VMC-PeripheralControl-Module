@@ -13,7 +13,7 @@
     bell-avr-libraries = { extras = ["serial"], version = "0.2.0a7" }
 
 [tool.poetry.group.dev.dependencies]
-    pre-commit = "^3.5.0"
+    pre-commit = "^3.6.0"
 
 [tool.pyright]
     typeCheckingMode           = "basic"
